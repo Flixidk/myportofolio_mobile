@@ -4,7 +4,7 @@ class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
   final String npm = "2506547853";
-  final String nama = "Nanta";
+  final String nama = "Muhammad Raihananta A.Y.";
   final String kelas = "PBP D";
 
   final List<ItemHomepage> items = [
@@ -34,15 +34,26 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Baris horizontal untuk menampilkan 3 InfoCard secara sejajar.
+            // Row 1: profile image + name
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const CircleAvatar(
+                  radius: 36,
+                  backgroundImage: AssetImage('assets/images/fotonanta.jpeg'),
+                ),
+                const SizedBox(width: 8.0),
+                Expanded(
+                  child: InfoCard(title: 'Name', content: nama),
+                ),
+              ],
+            ),
+
+            // Row 2: NPM + class
+            Row(
               children: [
                 Expanded(
                   child: InfoCard(title: 'NPM', content: npm),
-                ),
-                Expanded(
-                  child: InfoCard(title: 'Name', content: nama),
                 ),
                 Expanded(
                   child: InfoCard(title: 'Class', content: kelas),
