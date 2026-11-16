@@ -1,14 +1,14 @@
-# 🐍 Portofolio Mobile App
+# 🐍 Portfolio Mobile App
 
 **Nama** : Muhammad Raihananta Adzaky Yuwono \
 **NPM** : 2506547853 \
 **Kelas** : PBP D 
 
 ## 📌 Project Overview
-A portofolio mobile app built using Flutter for my Platform-Based Programming Class. This app connects to my Django portofilio web app via a DRF API endpoint.
+A portfolio mobile app built using Flutter for my Platform-Based Programming class. This app connects to my Django portfolio web app through a Django REST Framework API endpoint.
 
 ## ⚙️ Setup Instructions
-**Important Note:** This is the mobile client for my portfolio. It is designed to talk to my Django + Django REST Framework backend ([myportofolio](https://github.com/Flixidk/myportofolio)), so the backend needs to be running for data-driven features to work. If you have any problems setting this up, please feel free to reach out!
+**Important note:** This is the mobile client for my portfolio. It connects to my Django and Django REST Framework backend ([myportfolio](https://github.com/Flixidk/myportofolio)), so the backend needs to be running for data-driven features to work. If you have any problems setting this up, please feel free to reach out!
 
 ### Prerequisites
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (run `flutter doctor` to verify your setup)
