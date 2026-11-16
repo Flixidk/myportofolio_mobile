@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -23,10 +24,16 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'My Portofolio',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white, 
+            fontWeight: FontWeight.bold
+          ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      
+      drawer: const LeftDrawer(),
 
       // Body halaman utama dengan padding di sekelilingnya.
       body: Padding(
@@ -87,9 +94,7 @@ class MyHomePage extends StatelessWidget {
                     crossAxisCount: 3,
                     // shrinkWrap agar ukuran kisi menyesuaikan tinggi konten anak.
                     shrinkWrap: true,
-                    children: items.map((ItemHomepage item) {
-                      return ItemCard(item);
-                    }).toList(),
+                    children: items.map((item) => ItemCard(item)).toList(),
                   ),
                 ],
               ),
