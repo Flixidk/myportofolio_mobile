@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:myportofolio_mobile/project_form.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -9,10 +10,10 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "PBP D";
 
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Experiences", Icons.folder, Colors.blue),
-    ItemHomepage("Tambah Experience", Icons.add_circle, Colors.blueAccent),
-    ItemHomepage("Lihat Skills", Icons.folder, Colors.deepPurple),
-    ItemHomepage("Tambah Skill", Icons.add_circle, Colors.deepPurpleAccent),
+    ItemHomepage("View Experiences", Icons.folder, Colors.blue),
+    ItemHomepage("Add Experience", Icons.add_circle, Colors.blueAccent),
+    ItemHomepage("View Skills", Icons.folder, Colors.deepPurple),
+    ItemHomepage("Add Skill", Icons.add_circle, Colors.deepPurpleAccent),
     ItemHomepage("Logout", Icons.logout, Colors.red),
   ];
 
@@ -23,7 +24,7 @@ class MyHomePage extends StatelessWidget {
       // AppBar menampilkan bar bagian atas halaman aplikasi.
       appBar: AppBar(
         title: const Text(
-          'My Portofolio',
+          'My Portfolio',
           style: TextStyle(
             color: Colors.white, 
             fontWeight: FontWeight.bold
@@ -51,7 +52,7 @@ class MyHomePage extends StatelessWidget {
                 ),
                 const SizedBox(width: 8.0),
                 Expanded(
-                  child: InfoCard(title: 'Name', content: nama),
+                  child: InfoCard(title: 'Nama', content: nama),
                 ),
               ],
             ),
@@ -63,21 +64,21 @@ class MyHomePage extends StatelessWidget {
                   child: InfoCard(title: 'NPM', content: npm),
                 ),
                 Expanded(
-                  child: InfoCard(title: 'Class', content: kelas),
+                  child: InfoCard(title: 'Kelas', content: kelas),
                 ),
               ],
             ),
 
             const SizedBox(height: 16.0),
 
-            // Bagian tengah: pesan sambutan dan kisi tombol menu portofolio.
+            // Center section: welcome message and portfolio menu grid.
             Center(
               child: Column(
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(top: 16.0),
                     child: Text(
-                      'Selamat datang di MyPortofolio Mobile!',
+                      'Welcome to My Portfolio Mobile!',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18.0,
@@ -149,20 +150,30 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      // Menggunakan warna dari ItemHomePage
+      // Use the color from ItemHomepage.
       color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        // Aksi ketika kartu ditekan oleh pengguna.
+          // Handle taps on the card.
         onTap: () {
-          // Menampilkan SnackBar dengan pesan interaktif.
+          // Show an interactive SnackBar message.
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}!"),
+                content: Text("You tapped ${item.name}!"),
               ),
             );
+
+          // Navigate to the relevant page.
+          if (item.name == "Add Experience"){
+            Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => ExperienceFormPage()
+                  ),
+              );
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(8),

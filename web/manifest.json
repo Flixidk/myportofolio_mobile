@@ -1,11 +1,11 @@
 {
-    "name": "myportofolio_mobile",
-    "short_name": "myportofolio_mobile",
+    "name": "My Portfolio",
+    "short_name": "Portfolio",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A personal portfolio app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

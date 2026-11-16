@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/menu.dart';
-// TODO: Impor halaman ProjectFormPage jika sudah dibuat
+import 'package:myportofolio_mobile/project_form.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -18,7 +18,7 @@ class LeftDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'My Portofolio',
+                  'My Portfolio',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -39,7 +39,7 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
-            // Navigasi ke home portofolio
+            // Navigate to the portfolio home page.
             onTap: (){
               Navigator.pushReplacement(
                 context, 
@@ -52,9 +52,14 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Experience'),
-            // Navigasi ke halaman add experience
+            // Navigate to the experience form.
             onTap: (){
-              // Todo
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => ExperienceFormPage()
+                  ),
+              );
             },
           )
         ],
