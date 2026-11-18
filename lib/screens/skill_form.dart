@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SkillFormPage extends StatefulWidget{
   const SkillFormPage({super.key});
@@ -210,6 +211,25 @@ class _SkillFormPageState extends State<SkillFormPage>{
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Center(
+                                      child: Container(
+                                        width: 96,
+                                        height: 96,
+                                        margin: const EdgeInsets.only(bottom: 16),
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade100,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: SvgPicture.network(
+                                          _deviconpath,
+                                          semanticsLabel: '$_title icon preview',
+                                          placeholderBuilder: (context) => const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                     Text('Skill Title: $_title'),
                                     Text('Category: $_category'),
                                     Text('Description: $_description'),
