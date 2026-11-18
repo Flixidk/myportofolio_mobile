@@ -1,6 +1,6 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
+import 'package:myportofolio_mobile/screens/skill_form.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -36,32 +36,41 @@ class LeftDrawer extends StatelessWidget {
               ],
             )
           ),
+
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Home'),
-            // Navigate to the portfolio home page.
-            onTap: (){
-              Navigator.pushReplacement(
-                context, 
-                MaterialPageRoute(
-                  builder: (context) => MyHomePage()
-                  ),
-              );
+            onTap: () {
+              // Go back to the first route (home) instead of stacking another one.
+              Navigator.popUntil(context, (route) => route.isFirst);
             },
           ),
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Experience'),
-            // Navigate to the experience form.
-            onTap: (){
-              Navigator.pushReplacement(
-                context, 
+            onTap: () {
+              final navigator = Navigator.of(context);
+              navigator.pop(); // close the drawer
+              navigator.push(
                 MaterialPageRoute(
-                  builder: (context) => ExperienceFormPage()
-                  ),
+                  builder: (context) => const ExperienceFormPage(),
+                ),
               );
             },
-          )
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_circle_outline),
+            title: const Text('Add Skill'),
+            onTap: () {
+              final navigator = Navigator.of(context);
+              navigator.pop(); // close the drawer
+              navigator.push(
+                MaterialPageRoute(
+                  builder: (context) => const SkillFormPage(),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

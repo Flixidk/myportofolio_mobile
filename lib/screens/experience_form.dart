@@ -50,8 +50,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage>{
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: "Experience title",
-                    labelText: "Experience title",
+                    hintText: "Experience Title",
+                    labelText: "Experience Title",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
@@ -76,8 +76,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage>{
                 child: TextFormField(
                   maxLines: 4,
                   decoration: InputDecoration(
-                    hintText: "Experience description",
-                    labelText: "Experience description",
+                    hintText: "Experience Description",
+                    labelText: "Experience Description",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
@@ -121,7 +121,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage>{
                 ),
               ),
 
-              // === Save button ===
+              // === Save Button ===
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
@@ -141,7 +141,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage>{
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Experience title: $_title'),
+                                    Text('Experience Title: $_title'),
                                     Text('Description: $_description'),
                                     Text('Category: $_category'),
                                   ],
