@@ -1,39 +1,41 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/item_card.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   final String npm = "2506547853";
   final String nama = "Muhammad Raihananta A.Y.";
   final String kelas = "PBP D";
 
-  final List<ItemHomepage> items = [
-    ItemHomepage("View Experiences", Icons.folder, Colors.blue),
-    ItemHomepage("Add Experience", Icons.add_circle, Colors.blueAccent),
-    ItemHomepage("View Skills", Icons.folder, Colors.deepPurple),
-    ItemHomepage("Add Skill", Icons.add_circle, Colors.deepPurpleAccent),
-    ItemHomepage("Logout", Icons.logout, Colors.red),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthState>().isLoggedIn;
+    final items = [
+      ItemHomepage("View Experiences", Icons.folder, Colors.blue),
+      ItemHomepage("Add Experience", Icons.add_circle, Colors.blueAccent),
+      ItemHomepage("View Skills", Icons.folder, Colors.deepPurple),
+      ItemHomepage("Add Skill", Icons.add_circle, Colors.deepPurpleAccent),
+      if (isLoggedIn)
+        ItemHomepage("Logout", Icons.logout, Colors.red)
+      else
+        ItemHomepage("Login", Icons.login, Colors.green),
+    ];
     // Scaffold menyediakan struktur visual dasar halaman (AppBar, Body, SnackBar).
     return Scaffold(
       // AppBar menampilkan bar bagian atas halaman aplikasi.
       appBar: AppBar(
         title: const Text(
           'My Portfolio',
-          style: TextStyle(
-            color: Colors.white, 
-            fontWeight: FontWeight.bold
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      
+
       drawer: const LeftDrawer(),
 
       // Body halaman utama dengan padding di sekelilingnya.
@@ -141,4 +143,3 @@ class ItemHomepage {
 
   ItemHomepage(this.name, this.icon, this.color);
 }
-

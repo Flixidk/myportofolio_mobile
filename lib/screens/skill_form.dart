@@ -3,18 +3,18 @@ import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class SkillFormPage extends StatefulWidget{
+class SkillFormPage extends StatefulWidget {
   const SkillFormPage({super.key});
 
   @override
   State<SkillFormPage> createState() => _SkillFormPageState();
 }
 
-class _SkillFormPageState extends State<SkillFormPage>{
+class _SkillFormPageState extends State<SkillFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _title = "";
-  String _category= "Dev Tools"; // Default
+  String _category = "Dev Tools"; // Default
   String _description = "";
   String _deviconpath = "";
   int _order = 0; // Default
@@ -26,15 +26,11 @@ class _SkillFormPageState extends State<SkillFormPage>{
     'Dev Tools',
   ];
 
-  @override  
-  Widget build (BuildContext context){
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Add Skill Form'
-          ),
-        ),
+        title: const Center(child: Text('Add Skill Form')),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
@@ -58,13 +54,13 @@ class _SkillFormPageState extends State<SkillFormPage>{
                       borderRadius: BorderRadius.circular(5.0),
                     ),
                   ),
-                  onChanged: (String? value){
+                  onChanged: (String? value) {
                     setState(() {
                       _title = value!;
                     });
                   },
-                  validator: (String? value){
-                    if (value == null || value.trim().isEmpty){
+                  validator: (String? value) {
+                    if (value == null || value.trim().isEmpty) {
                       return "Please enter a skill title.";
                     }
                     return null;
@@ -84,10 +80,12 @@ class _SkillFormPageState extends State<SkillFormPage>{
                     ),
                   ),
                   items: _categories
-                      .map((category) => DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(category),
-                          ))
+                      .map(
+                        (category) => DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        ),
+                      )
                       .toList(),
                   onChanged: (String? newValue) {
                     setState(() {
@@ -146,10 +144,11 @@ class _SkillFormPageState extends State<SkillFormPage>{
                     }
 
                     final uri = Uri.tryParse(value.trim());
-                    final isValidUrl = uri != null &&
-                      uri.hasScheme &&
-                      (uri.scheme == 'http' || uri.scheme == 'https') && 
-                      uri.host.isNotEmpty;
+                    final isValidUrl =
+                        uri != null &&
+                        uri.hasScheme &&
+                        (uri.scheme == 'http' || uri.scheme == 'https') &&
+                        uri.host.isNotEmpty;
 
                     if (!isValidUrl) {
                       return "Please enter a valid URL (starts with http:// or https://)!";
@@ -178,11 +177,11 @@ class _SkillFormPageState extends State<SkillFormPage>{
                     });
                   },
 
-                  validator: (String? value){
-                    if (value == null || value.trim().isEmpty){
+                  validator: (String? value) {
+                    if (value == null || value.trim().isEmpty) {
                       return "Please enter an order number.";
                     }
-                    if (int.tryParse(value.trim()) == null){
+                    if (int.tryParse(value.trim()) == null) {
                       return "Order must be a whole number.";
                     }
 
@@ -204,7 +203,7 @@ class _SkillFormPageState extends State<SkillFormPage>{
                       if (_formKey.currentState!.validate()) {
                         showDialog(
                           context: context,
-                          builder: (context){
+                          builder: (context) {
                             return AlertDialog(
                               title: const Text('Skill added successfully!'),
                               content: SingleChildScrollView(
@@ -215,18 +214,25 @@ class _SkillFormPageState extends State<SkillFormPage>{
                                       child: Container(
                                         width: 96,
                                         height: 96,
-                                        margin: const EdgeInsets.only(bottom: 16),
+                                        margin: const EdgeInsets.only(
+                                          bottom: 16,
+                                        ),
                                         padding: const EdgeInsets.all(12),
                                         decoration: BoxDecoration(
                                           color: Colors.grey.shade100,
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         child: SvgPicture.network(
                                           _deviconpath,
-                                          semanticsLabel: '$_title icon preview',
-                                          placeholderBuilder: (context) => const Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
+                                          semanticsLabel:
+                                              '$_title icon preview',
+                                          placeholderBuilder: (context) =>
+                                              const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
                                         ),
                                       ),
                                     ),
@@ -241,15 +247,15 @@ class _SkillFormPageState extends State<SkillFormPage>{
                               actions: [
                                 TextButton(
                                   child: const Text('OK'),
-                                  onPressed: (){
+                                  onPressed: () {
                                     Navigator.pop(context);
                                     _formKey.currentState!.reset();
                                     setState(() {
-                                      _category = "Dev Tools"; 
-                                    }); 
+                                      _category = "Dev Tools";
+                                    });
                                   },
                                 ),
-                              ]
+                              ],
                             );
                           },
                         );
