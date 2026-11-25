@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -15,6 +16,7 @@ jobs:
     with:
       setup: dart run build_runner build --delete-conflicting-outputs
       analyze_directories: lib
+      format_directories: lib
       coverage_excludes: "**/*.g.dart"
       min_coverage: 0
       timeout_minutes: 15
