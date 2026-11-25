@@ -40,7 +40,9 @@ class _SkillFormPageState extends State<SkillFormPage> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Your session expired. Please log in again.')),
+      const SnackBar(
+        content: Text('Your session expired. Please log in again.'),
+      ),
     );
 
     await Navigator.push<bool>(
@@ -111,9 +113,9 @@ class _SkillFormPageState extends State<SkillFormPage> {
       }
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not save skill: $error')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not save skill: $error')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

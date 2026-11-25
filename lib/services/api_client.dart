@@ -81,10 +81,7 @@ class ApiClient {
         .toList();
   }
 
-  Future<Skill> createSkill(
-    Skill skill, {
-    required String token,
-  }) async {
+  Future<Skill> createSkill(Skill skill, {required String token}) async {
     final response = await _client.post(
       _uri('/api/v1/skills/'),
       headers: {
@@ -100,16 +97,10 @@ class ApiClient {
     return Skill.fromJson(decoded);
   }
 
-  Future<void> deleteSkill(
-    String skillId, {
-    required String token,
-  }) async {
+  Future<void> deleteSkill(String skillId, {required String token}) async {
     final response = await _client.delete(
       _uri('/api/v1/skills/$skillId/'),
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Token $token',
-      },
+      headers: {'Accept': 'application/json', 'Authorization': 'Token $token'},
     );
     _ensureSuccess(response);
   }

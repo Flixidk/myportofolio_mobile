@@ -34,7 +34,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     final skillId = widget.skill.id;
     if (skillId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('This skill has no ID and cannot be deleted.')),
+        const SnackBar(
+          content: Text('This skill has no ID and cannot be deleted.'),
+        ),
       );
       return;
     }
@@ -71,9 +73,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       await context.read<ApiClient>().deleteSkill(skillId, token: token);
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Skill deleted.')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Skill deleted.')));
       Navigator.pop(context, true);
     } on ApiException catch (error) {
       if (!mounted) return;
@@ -87,7 +88,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Your session expired. Please log in again.')),
+          const SnackBar(
+            content: Text('Your session expired. Please log in again.'),
+          ),
         );
         await Navigator.push<bool>(
           context,
@@ -110,9 +113,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       }
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not delete skill: $error')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not delete skill: $error')));
     } finally {
       if (mounted) setState(() => _isDeleting = false);
     }
