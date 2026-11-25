@@ -1,7 +1,12 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/models/skill.dart';
+import 'package:myportofolio_mobile/screens/login_screen.dart';
+import 'package:myportofolio_mobile/screens/skill_list_screen.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_guard.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class SkillFormPage extends StatefulWidget {
   const SkillFormPage({super.key});
@@ -13,263 +18,195 @@ class SkillFormPage extends StatefulWidget {
 class _SkillFormPageState extends State<SkillFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _title = "";
-  String _category = "Dev Tools"; // Default
-  String _description = "";
-  String _deviconpath = "";
-  int _order = 0; // Default
+  String _title = '';
+  String _category = 'tools';
+  String _description = '';
+  String _iconPath = '';
+  bool _isSubmitting = false;
 
-  final List<String> _categories = [
-    'Frontend',
-    'Backend',
-    'Database',
-    'Dev Tools',
+  static const _categories = <MapEntry<String, String>>[
+    MapEntry('frontend', 'Frontend'),
+    MapEntry('backend', 'Backend'),
+    MapEntry('database', 'Database'),
+    MapEntry('tools', 'Dev Tools'),
   ];
+
+  Future<void> _handleExpiredSession() async {
+    try {
+      await context.read<AuthState>().logout();
+    } on ApiException {
+      // AuthState clears the local token even if the logout request fails.
+    }
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Your session expired. Please log in again.')),
+    );
+
+    await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final loggedIn = await ensureLoggedIn(context);
+    if (!mounted || !loggedIn) return;
+
+    final token = context.read<AuthState>().token;
+    if (token == null) return;
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final skill = Skill(
+        title: _title.trim(),
+        description: _description.trim(),
+        category: _category,
+        iconPath: _iconPath.trim(),
+      );
+
+      await context.read<ApiClient>().createSkill(skill, token: token);
+      if (!mounted) return;
+
+      final shouldViewList = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Skill added successfully'),
+          content: const Text('Your skill has been saved.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Stay here'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('View skills'),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldViewList == true && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SkillListScreen()),
+        );
+      }
+    } on ApiException catch (error) {
+      if (!mounted) return;
+
+      if (error.statusCode == 401) {
+        await _handleExpiredSession();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Could not save skill (${error.statusCode}): ${error.message}',
+            ),
+          ),
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not save skill: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('Add Skill Form')),
+        title: const Text('Add Skill'),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
-
       drawer: const LeftDrawer(),
-
       body: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // === Skill Title Field ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Skill Title",
-                    labelText: "Skill Title",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _title = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Please enter a skill title.";
-                    }
-                    return null;
-                  },
-                ),
+        child: ListView(
+          padding: const EdgeInsets.all(12),
+          children: [
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
               ),
-
-              // === Category Dropdown ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  initialValue: _category,
-                  decoration: InputDecoration(
-                    labelText: "Category",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  items: _categories
-                      .map(
-                        (category) => DropdownMenuItem<String>(
-                          value: category,
-                          child: Text(category),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _category = newValue!;
-                    });
-                  },
-                ),
+              onChanged: (value) => _title = value,
+              validator: (value) => value == null || value.trim().isEmpty
+                  ? 'Please enter a skill title.'
+                  : null,
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              initialValue: _category,
+              decoration: const InputDecoration(
+                labelText: 'Category',
+                border: OutlineInputBorder(),
               ),
-
-              // === Description Field ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    hintText: "Skill Description",
-                    labelText: "Skill Description",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+              items: _categories
+                  .map(
+                    (category) => DropdownMenuItem<String>(
+                      value: category.key,
+                      child: Text(category.value),
                     ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _description = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Please enter a skill description.";
-                    }
-                    return null;
-                  },
-                ),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) setState(() => _category = value);
+              },
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              maxLines: 4,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
               ),
-
-              // === Devicon Field ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.url,
-                  decoration: InputDecoration(
-                    hintText: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg",
-                    labelText: "Devicon Path",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _deviconpath = value!.trim();
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Please enter a devicon URL.";
-                    }
-
-                    final uri = Uri.tryParse(value.trim());
-                    final isValidUrl =
-                        uri != null &&
-                        uri.hasScheme &&
-                        (uri.scheme == 'http' || uri.scheme == 'https') &&
-                        uri.host.isNotEmpty;
-
-                    if (!isValidUrl) {
-                      return "Please enter a valid URL (starts with http:// or https://)!";
-                    }
-                    return null;
-                  },
-                ),
+              onChanged: (value) => _description = value,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              keyboardType: TextInputType.url,
+              decoration: const InputDecoration(
+                labelText: 'Icon path',
+                hintText: 'https://.../icon.svg',
+                border: OutlineInputBorder(),
               ),
+              onChanged: (value) => _iconPath = value,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Please enter an icon URL.';
+                }
 
-              // === Order Field ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    hintText: "0",
-                    labelText: "Order",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _order = int.tryParse(value ?? "") ?? 0;
-                    });
-                  },
-
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Please enter an order number.";
-                    }
-                    if (int.tryParse(value.trim()) == null) {
-                      return "Order must be a whole number.";
-                    }
-
-                    return null;
-                  },
-                ),
-              ),
-
-              // === Save Button ===
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Skill added successfully!'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Center(
-                                      child: Container(
-                                        width: 96,
-                                        height: 96,
-                                        margin: const EdgeInsets.only(
-                                          bottom: 16,
-                                        ),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.shade100,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: SvgPicture.network(
-                                          _deviconpath,
-                                          semanticsLabel:
-                                              '$_title icon preview',
-                                          placeholderBuilder: (context) =>
-                                              const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                    Text('Skill Title: $_title'),
-                                    Text('Category: $_category'),
-                                    Text('Description: $_description'),
-                                    Text('Icon Path: $_deviconpath'),
-                                    Text('Order: $_order'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _formKey.currentState!.reset();
-                                    setState(() {
-                                      _category = "Dev Tools";
-                                    });
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+                final uri = Uri.tryParse(value.trim());
+                if (uri == null ||
+                    !uri.hasScheme ||
+                    !{'http', 'https'}.contains(uri.scheme) ||
+                    uri.host.isEmpty) {
+                  return 'Enter a valid http or https URL.';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isSubmitting ? null : _submit,
+              child: _isSubmitting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Save'),
+            ),
+          ],
         ),
       ),
     );

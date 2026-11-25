@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/experience.dart';
+import 'package:myportofolio_mobile/screens/experience_list_screen.dart';
 import 'package:myportofolio_mobile/screens/login_screen.dart';
 import 'package:myportofolio_mobile/services/api_client.dart';
 import 'package:myportofolio_mobile/services/auth_guard.dart';
@@ -80,19 +81,30 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
       );
 
       if (!mounted) return;
-      await showDialog<void>(
+      final shouldViewList = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
           title: const Text('Experience added successfully!'),
           content: const Text('Your experience has been saved.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('OK'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Stay here'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('View experiences'),
             ),
           ],
         ),
       );
+
+      if (shouldViewList == true && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const ExperienceListScreen()),
+        );
+      }
     } on ApiException catch (error) {
       if (!mounted) return;
 
